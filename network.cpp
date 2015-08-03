@@ -5,6 +5,3 @@ Network::Network(int numNodes){
     netNodes.push_back(Node(i));
   }
 }
-std::vector<Node> Network::getNodes(){
-  return netNodes;
-}

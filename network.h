@@ -2,9 +2,8 @@
 #include "node.h"
 
 class Network{
-private:
-  std::vector<Node> netNodes;
 public:
+  std::vector<Node> netNodes;
+
   Network(int numNodes);
-  std::vector<Node> getNodes();
 };

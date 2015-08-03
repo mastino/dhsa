@@ -3,7 +3,7 @@
 void getSha256Digest(unsigned char *inputDigest){
   SHA256_CTX shaControl;
   SHA256_Init(&shaControl);
-  SHA256_Update(&shaControl, inputDigest, 256);
+  SHA256_Update(&shaControl, inputDigest, 32);
   SHA256_Final(inputDigest, &shaControl);
 }
 

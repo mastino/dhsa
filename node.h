@@ -1,11 +1,9 @@
 #include "keygroup.h"
 
 class Node{
-private:
+public:
   int nodeId;
   KeyGroup kg;
-public:
+
   Node(int id);
-  int getNodeId();
-  KeyGroup getKeyGroup();
 };
