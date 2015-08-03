@@ -7,3 +7,6 @@ void KeyGroup::setGroupKey(unsigned char *newGroupKey){
 void KeyGroup::cycleGroupKey(){
   getSha256Digest(groupKey);
 }
+unsigned char* KeyGroup::getGroupKey(){
+  return groupKey;
+}
