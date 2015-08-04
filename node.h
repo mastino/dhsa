@@ -10,4 +10,5 @@ public:
   void setGroupKey(unsigned char* newKey);
   unsigned char* getGroupKey();
   void cycleGroupKey();
+  void joinGroup(Node requestedNode);
 };

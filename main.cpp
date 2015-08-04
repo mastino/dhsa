@@ -2,6 +2,7 @@
 #include <iostream>
 #include <openssl/rand.h>
 #include "network.h"
+#include "aes.h"
 
 using namespace std;
 
@@ -36,7 +37,31 @@ int main(int argc, char** argv){
   net.netNodes[1].cycleGroupKey();
   cout << "The key for node " << net.netNodes[1].getNodeId() << " after one way hash is: ";
   cout << printDigest(net.netNodes[1].getGroupKey()) << endl;
+  
+  // Testing AES encryption/decryption
+  unsigned char iv[16];
+  unsigned char *plaintext = (unsigned char *) "This is a secret";
+  unsigned char ciphertext[128];
+  unsigned char decrypted[128];
+  int dec_len, ciph_len;
 
+  RAND_bytes(iv, sizeof(iv));
+  ERR_load_crypto_strings();
+  OpenSSL_add_all_algorithms();
+  OPENSSL_config(NULL);
+
+  ciph_len = encrypt(plaintext, 16, net.netNodes[0].getGroupKey(), iv, ciphertext);
+
+  cout << "Ciphertext is:" <<endl;
+  BIO_dump_fp(stdout, (const char *) ciphertext, ciph_len);
+
+  dec_len = decrypt(ciphertext, ciph_len, net.netNodes[1].getGroupKey(), iv, decrypted);
+  decrypted[dec_len] = '\0';
+
+  cout << "Decrypted text is: " << decrypted << endl;
+
+  EVP_cleanup();
+  ERR_free_strings();
 
   return 0;
 }

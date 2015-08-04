@@ -19,3 +19,7 @@ unsigned char* Node::getGroupKey(){
 void Node::cycleGroupKey(){
   kg.cycleGroupKey();
 }
+
+void Node::joinGroup(Node requestedNode){
+  
+}
