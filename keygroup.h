@@ -1,8 +1,10 @@
 #include "onewayhash.h"
 
 class KeyGroup{
-public:
+private:  
   unsigned char *groupKey;
-  
+public:
   void cycleGroupKey();
+  void setGroupKey(unsigned char *newKey);
+  unsigned char* getGroupKey();
 };
