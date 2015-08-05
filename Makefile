@@ -2,8 +2,10 @@ CC = g++
 
 all: dhsatest
 
-dhsatest: network.o node.o keygroup.o onewayhash.o aes.o
-	$(CC) -o dhsatest network.o node.o keygroup.o onewayhash.o aes.o main.cpp -lcrypto -lssl
+dhsatest: network.o node.o keygroup.o onewayhash.o aes.o dhmanager.o
+	$(CC) -o dhsatest network.o node.o keygroup.o onewayhash.o aes.o dhmanager.o main.cpp -lcrypto -lssl
+dhmanager.o:
+	$(CC) -c dhmanager.cpp -lcrypto -lssl
 aes.o:
 	$(CC) -c aes.cpp -lcrypto -lssl
 onewayhash.o:

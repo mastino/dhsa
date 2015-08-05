@@ -3,6 +3,7 @@
 #include <openssl/rand.h>
 #include "network.h"
 #include "aes.h"
+#include "dhmanager.h"
 
 using namespace std;
 
@@ -51,7 +52,8 @@ int main(int argc, char** argv){
   OPENSSL_config(NULL);
 
   ciph_len = encrypt(plaintext, 16, net.netNodes[0].getGroupKey(), iv, ciphertext);
-
+  
+  cout << "Plaintext is: " << plaintext << endl;
   cout << "Ciphertext is:" <<endl;
   BIO_dump_fp(stdout, (const char *) ciphertext, ciph_len);
 
@@ -59,9 +61,12 @@ int main(int argc, char** argv){
   decrypted[dec_len] = '\0';
 
   cout << "Decrypted text is: " << decrypted << endl;
-
+  
   EVP_cleanup();
   ERR_free_strings();
 
+  // Testing DH class
+  DHManager dhm = DHManager();
+  
   return 0;
 }
