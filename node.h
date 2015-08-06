@@ -1,4 +1,5 @@
 #include "keygroup.h"
+#include "dhmanager.h"
 
 class Node{
 private:
@@ -11,4 +12,5 @@ public:
   unsigned char* getGroupKey();
   void cycleGroupKey();
   void joinGroup(Node requestedNode);
+  void deriveSharedKey(int id);
 };

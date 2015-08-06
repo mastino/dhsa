@@ -3,7 +3,6 @@
 #include <openssl/rand.h>
 #include "network.h"
 #include "aes.h"
-#include "dhmanager.h"
 
 using namespace std;
 
@@ -67,6 +66,6 @@ int main(int argc, char** argv){
 
   // Testing DH class
   DHManager dhm = DHManager();
-  
+
   return 0;
 }

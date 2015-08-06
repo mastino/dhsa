@@ -19,6 +19,9 @@ unsigned char* Node::getGroupKey(){
 void Node::cycleGroupKey(){
   kg.cycleGroupKey();
 }
+void Node::deriveSharedKey(int nodeToDerive){
+
+}
 
 void Node::joinGroup(Node requestedNode){
   
