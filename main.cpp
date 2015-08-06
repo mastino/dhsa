@@ -7,6 +7,12 @@
 using namespace std;
 
 int main(int argc, char** argv){
+  EVP_PKEY *paramKey = NULL;
+  EVP_PKEY_CTX *paramControl = EVP_PKEY_CTX_new_id(EVP_PKEY_DH, NULL);
+  EVP_PKEY_paramgen_init(paramControl);
+  EVP_PKEY_CTX_set_dh_paramgen_prime_len(paramControl, 1024);
+  EVP_PKEY_paramgen(paramControl, &paramKey);
+
   // Testing Network class
   Network net = Network(9);
   // Testing Node class
@@ -65,7 +71,8 @@ int main(int argc, char** argv){
   ERR_free_strings();
 
   // Testing DH class
-  DHManager dhm = DHManager();
+  DHManager dhm = DHManager(*paramKey);
+  dhm.generateKey();
 
   return 0;
 }
