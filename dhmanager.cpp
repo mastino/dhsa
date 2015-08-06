@@ -1,6 +1,6 @@
 #include "dhmanager.h"
 
-DHManager::DHManager(EVP_PKEY &paramKey){
+DHManager::DHManager(EVP_PKEY *paramKey){
   pKey = NULL;
   keyControl = EVP_PKEY_CTX_new(paramKey, NULL);
   EVP_PKEY_keygen_init(keyControl);

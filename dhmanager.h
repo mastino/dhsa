@@ -11,7 +11,7 @@ private:
   EVP_PKEY *paramKey;
   std::map <int, unsigned char *> sharedKeys;
 public:
-  DHManager(EVP_PKEY &paramKey);
+  DHManager(EVP_PKEY *paramKey);
   void generateKey();
   void derive(int id);
   EVP_PKEY getKey();

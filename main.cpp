@@ -71,7 +71,7 @@ int main(int argc, char** argv){
   ERR_free_strings();
 
   // Testing DH class
-  DHManager dhm = DHManager(*paramKey);
+  DHManager dhm = DHManager(paramKey);
   dhm.generateKey();
 
   return 0;
