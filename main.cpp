@@ -71,8 +71,17 @@ int main(int argc, char** argv){
   ERR_free_strings();
 
   // Testing DH class
-  DHManager dhm = DHManager(*paramKey);
-  dhm.generateKey();
+  DHManager dhm1 = DHManager(paramKey);
+  dhm1.generateKey();
+
+  DHManager dhm2 = DHManager(paramKey);
+  dhm2.generateKey();
+
+  dhm1.deriveSharedKey(dhm2.getKey());
+  dhm2.deriveSharedKey(dhm1.getKey());
+
+  cout << "The shared Diffie-Hellman secret for DHManager 1: " << printDigest(dhm1.getSharedKey()) << endl;
+  cout << "The shared Diffie-Hellman secret for DHManager 2: " << printDigest(dhm2.getSharedKey()) << endl;
 
   return 0;
 }
