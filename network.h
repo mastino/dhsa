@@ -1,3 +1,7 @@
+
+#ifndef NETWROK_H
+#define NETWORK_H
+
 #include <vector>
 #include "node.h"
 
@@ -7,3 +11,5 @@ public:
 
   Network(int numNodes);
 };
+
+#endif

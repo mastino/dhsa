@@ -3,6 +3,7 @@
 #include <openssl/rand.h>
 #include "network.h"
 #include "aes.h"
+#include "tree_table.h"
 
 using namespace std;
 
@@ -83,5 +84,66 @@ int main(int argc, char** argv){
   cout << "The shared Diffie-Hellman secret for DHManager 1: " << printDigest(dhm1.getSharedKey()) << endl;
   cout << "The shared Diffie-Hellman secret for DHManager 2: " << printDigest(dhm2.getSharedKey()) << endl;
 
+
+
+  cout << endl << endl;
+  cout << "-------------- test tree table -------------" << endl;
+  cout << "   making leaf nodes ids 0 and 1; both using paramkey" << endl;
+  LeafNode leaf_0;
+  LeafNode leaf_1;
+  leaf_0.id = 0; leaf_1.id = 1;
+  leaf_0.public_key = leaf_1.public_key = paramKey;
+  cout << "   leaf 0 id = " << leaf_0.id << endl;
+
+  cout << "   redoing DH test with leaf node param" << endl << endl;
+
+  DHManager dhm3 = DHManager(leaf_0.public_key);
+  dhm3.generateKey();
+
+  DHManager dhm4 = DHManager(leaf_1.public_key);
+  dhm4.generateKey();
+
+  dhm3.deriveSharedKey(dhm4.getKey());
+  dhm4.deriveSharedKey(dhm3.getKey());
+
+  cout << "   The shared Diffie-Hellman secret for DHManager 3: " << printDigest(dhm3.getSharedKey()) << endl;
+  cout << "   The shared Diffie-Hellman secret for DHManager 4: " << printDigest(dhm4.getSharedKey()) << endl;
+  cout << endl;
+
+  cout << "   making leaf pair" << endl;
+  LeafPair entry;
+  entry.push_back(leaf_0);
+  entry.push_back(leaf_1);
+  cout << "   leaf pair item 0: " << entry[0].id << endl;
+  cout << "   leaf pair item 1:" << entry[1].id << endl;
+  cout << endl;
+
+  cout << "   making table size 1" << endl;
+  Table credenza;
+  credenza.insert(pair<string, LeafPair>("0", entry) );
+  cout << "   table spot 0 entry 1 id:" << (credenza.find("0")->second)[1].id << endl;
+
+  
+  
+  cout << endl << "Goodbye." << endl << endl;
   return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
