@@ -15,6 +15,6 @@ public:
   void cycleGroupKey();
   void setGroupKey(unsigned char *newKey);
   int setRootNode(TreeNode* new_root_node);
-  int addLeafNode(TreNode* new_leaf);
   unsigned char* getGroupKey();
+  int addLeafNode(TreNode* new_leaf);
 };
