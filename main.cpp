@@ -66,9 +66,6 @@ int main(int argc, char** argv){
   decrypted[dec_len] = '\0';
 
   cout << "Decrypted text is: " << decrypted << endl;
-  
-  EVP_cleanup();
-  ERR_free_strings();
 
   // Testing DH class
   DHManager dhm1 = DHManager(paramKey);
@@ -82,6 +79,25 @@ int main(int argc, char** argv){
 
   cout << "The shared Diffie-Hellman secret for DHManager 1: " << printDigest(dhm1.getSharedKey()) << endl;
   cout << "The shared Diffie-Hellman secret for DHManager 2: " << printDigest(dhm2.getSharedKey()) << endl;
+  
+  unsigned char ciphertextDH[128];
+  unsigned char decryptedDH[128];
+  int dec_len_dh, ciph_len_dh;
+  
+  ciph_len_dh = encrypt(dhm1.getSharedKey(), 32, dhm1.getSharedKey(), iv, ciphertextDH);
+
+  dec_len_dh = decrypt(ciphertextDH, ciph_len_dh, dhm2.getSharedKey(), iv, decryptedDH);
+  decrypted[dec_len] = '\0';
+
+
+  cout << "Group key encrypted by Node 1 with shared DH key: " << endl;
+  BIO_dump_fp(stdout, (const char *) ciphertextDH, ciph_len_dh);
+  
+  cout  << "Group key decrypted by Node 2 with shared DH key: ";
+  cout << printDigest(decryptedDH) << endl; 
+
+  EVP_cleanup();
+  ERR_free_strings();
 
   return 0;
 }
