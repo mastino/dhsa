@@ -88,26 +88,23 @@ int main(int argc, char** argv){
 
   cout << endl << endl;
   cout << "-------------- test tree table -------------" << endl;
-  cout << "   making leaf nodes ids 0 and 1; both using paramkey" << endl;
+  cout << "   making leaf nodes ids 0 and 1; both using respective dhm keys" << endl;
   LeafNode leaf_0;
   LeafNode leaf_1;
   leaf_0.id = 0; leaf_1.id = 1;
-  leaf_0.public_key = leaf_1.public_key = paramKey;
+  leaf_0.public_key = dhm1.getKey();
+  leaf_1.public_key = dhm2.getKey();  
+
+
   cout << "   leaf 0 id = " << leaf_0.id << endl;
 
   cout << "   redoing DH test with leaf node param" << endl << endl;
 
-  DHManager dhm3 = DHManager(leaf_0.public_key);
-  dhm3.generateKey();
+  dhm1.deriveSharedKey(leaf_1.public_key);
+  dhm2.deriveSharedKey(leaf_0.public_key);
 
-  DHManager dhm4 = DHManager(leaf_1.public_key);
-  dhm4.generateKey();
-
-  dhm3.deriveSharedKey(dhm4.getKey());
-  dhm4.deriveSharedKey(dhm3.getKey());
-
-  cout << "   The shared Diffie-Hellman secret for DHManager 3: " << printDigest(dhm3.getSharedKey()) << endl;
-  cout << "   The shared Diffie-Hellman secret for DHManager 4: " << printDigest(dhm4.getSharedKey()) << endl;
+  cout << "   The shared Diffie-Hellman secret for DHManager 1: " << printDigest(dhm1.getSharedKey()) << endl;
+  cout << "   The shared Diffie-Hellman secret for DHManager 2: " << printDigest(dhm2.getSharedKey()) << endl;
   cout << endl;
 
   cout << "   making leaf pair" << endl;
