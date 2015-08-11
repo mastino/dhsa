@@ -3,7 +3,7 @@
  * definitions to manage tree information
  * Author: Brian Gravelle Caes Lab University of Oregon
  * Date Started: 10 August 2015
- * Last Update:  10 August 2015
+ * Last Update:  11 August 2015
  *
  *
 */
@@ -20,9 +20,21 @@
 using namespace std;
 
 
+union Node {
+  LeafNode leaf_node;
+  MiddleNode middle_node;
+}
+
 struct LeafNode {
   int id;
   EVP_PKEY *public_key;
+  Node *parent_node;
+};
+
+struct MiddleNode {
+  unsigned char* key;
+  string bin_code, dec_code;
+  Node *left_child, *right_child, parent_node;
 };
 
 typedef vector<LeafNode> LeafPair;
