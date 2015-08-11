@@ -20,7 +20,7 @@
 using namespace std;
 
 
-union Node {
+union TreeNode {
   LeafNode leaf_node;
   MiddleNode middle_node;
 }
@@ -28,13 +28,13 @@ union Node {
 struct LeafNode {
   int id;
   EVP_PKEY *public_key;
-  Node *parent_node;
+  TreeNode *parent_node;
 };
 
 struct MiddleNode {
   unsigned char* key;
   string bin_code, dec_code;
-  Node *left_child, *right_child, parent_node;
+  TreeNode *left_child, *right_child, *parent_node;
 };
 
 typedef vector<LeafNode> LeafPair;
