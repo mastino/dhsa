@@ -21,5 +21,9 @@ network.o:
 	$(CC) -c network.cpp
 node.o:
 	$(CC) -c node.cpp
+leaf_node.o:
+	$(CC) -c leaf_node.cpp
+middle_node.o:
+	$(CC) -c middle_node.cpp
 clean:
 	$(RM) main *.o *~
