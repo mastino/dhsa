@@ -9,7 +9,7 @@ class Network{
 public:
   std::vector<Node> netNodes;
 
-  Network(int numNodes);
+  Network(int numNodes, EVP_PKEY *params);
 };
 
 #endif
