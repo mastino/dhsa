@@ -14,38 +14,43 @@ int main(int argc, char** argv){
   EVP_PKEY_CTX_set_dh_paramgen_prime_len(paramControl, 1024);
   EVP_PKEY_paramgen(paramControl, &paramKey);
 
+  cout << endl << "----- Testing Network and Node constructors -----" << endl <<endl;
   // Testing Network class
   Network net = Network(9, paramKey);
   // Testing Node class
   cout <<  "The id of the node is: " << net.netNodes[0].getNodeId() << endl;
 
   // Testing the genration of random keys and SHA1 one way hash
+  cout << endl << "----- Testing Random 256 bit key generation and SHA-1 function -----" << endl << endl;
+
   unsigned char key[32];
   RAND_bytes(key, sizeof(key));
-  cout << "The original random key is: " << printDigest(key) << endl;
+  cout << "The original random key is: " << printDigest(key) << endl << endl;
   getSha256Digest(key);
   cout << "The new key is: " << printDigest(key) << endl;
 
   //Testing KeyGroup class
+  cout << endl << "----- Testing Key Group -----" << endl << endl;
   unsigned char node1Key[32];
   copy(key, key+32, node1Key);
   net.netNodes[0].setGroupKey(key);
   cout << "The key for node " << net.netNodes[0].getNodeId() << " is: ";
-  cout << printDigest(net.netNodes[0].getGroupKey()) << endl;
+  cout << printDigest(net.netNodes[0].getGroupKey()) << endl << endl;
  
   net.netNodes[1].setGroupKey(node1Key);
   cout << "The key for node " << net.netNodes[1].getNodeId() << " is: ";
-  cout << printDigest(net.netNodes[1].getGroupKey()) << endl;
+  cout << printDigest(net.netNodes[1].getGroupKey()) << endl <<endl;
 
   net.netNodes[0].cycleGroupKey();
   cout << "The key for node " << net.netNodes[0].getNodeId() << " after one way hash is: ";
-  cout << printDigest(net.netNodes[0].getGroupKey()) << endl;
+  cout << printDigest(net.netNodes[0].getGroupKey()) << endl << endl;
 
   net.netNodes[1].cycleGroupKey();
   cout << "The key for node " << net.netNodes[1].getNodeId() << " after one way hash is: ";
   cout << printDigest(net.netNodes[1].getGroupKey()) << endl;
   
   // Testing AES encryption/decryption
+  cout << endl << "----- Testing AES Encryption/Decryption -----" << endl << endl;
   unsigned char iv[16];
   unsigned char *plaintext = (unsigned char *) "This is a secret";
   unsigned char ciphertext[128];
@@ -59,24 +64,25 @@ int main(int argc, char** argv){
 
   ciph_len = encrypt(plaintext, 16, net.netNodes[0].getGroupKey(), iv, ciphertext);
   
-  cout << "Plaintext is: " << plaintext << endl;
+  cout << "Plaintext is: " << plaintext << endl <<endl;
   cout << "Ciphertext is:" <<endl;
   BIO_dump_fp(stdout, (const char *) ciphertext, ciph_len);
 
   dec_len = decrypt(ciphertext, ciph_len, net.netNodes[1].getGroupKey(), iv, decrypted);
   decrypted[dec_len] = '\0';
 
-  cout << "Decrypted text is: " << decrypted << endl;
+  cout << endl << "Decrypted text is: " << decrypted << endl;
 
   // Testing DH class
+  cout << endl << "----- DH Parameters/Key Generation/Key Exchange -----" << endl << endl;
   net.netNodes[0].dhm.generateKey();
   net.netNodes[1].dhm.generateKey();
 
   net.netNodes[0].dhm.deriveSharedKey(net.netNodes[1].dhm.getKey());
   net.netNodes[1].dhm.deriveSharedKey(net.netNodes[0].dhm.getKey());
 
-  cout << "The shared Diffie-Hellman secret for DHManager 0: " << printDigest(net.netNodes[0].dhm.getSharedKey()) << endl;
-  cout << "The shared Diffie-Hellman secret for DHManager 1: " << printDigest(net.netNodes[1].dhm.getSharedKey()) << endl;
+  cout << "The shared Diffie-Hellman secret for DHManager 0: " << printDigest(net.netNodes[0].dhm.getSharedKey()) << endl << endl;
+  cout << "The shared Diffie-Hellman secret for DHManager 1: " << printDigest(net.netNodes[1].dhm.getSharedKey()) << endl <<endl;
   
   unsigned char ciphertextDH[128];
   unsigned char decryptedDH[128];
@@ -88,10 +94,10 @@ int main(int argc, char** argv){
   decrypted[dec_len] = '\0';
 
 
-  cout << "Group key encrypted by Node 0 with shared DH key: " << endl;
+  cout << "Group key encrypted by Node 0 with shared DH key: " << endl << endl;
   BIO_dump_fp(stdout, (const char *) ciphertextDH, ciph_len_dh);
   
-  cout  << "Group key decrypted by Node 1 with shared DH key: ";
+  cout << endl << "Group key decrypted by Node 1 with shared DH key: ";
   cout << printDigest(decryptedDH) << endl; 
 
   EVP_cleanup();
