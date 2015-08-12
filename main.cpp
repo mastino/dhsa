@@ -15,7 +15,7 @@ int main(int argc, char** argv){
   EVP_PKEY_paramgen(paramControl, &paramKey);
 
   // Testing Network class
-  Network net = Network(9);
+  Network net = Network(9, paramKey);
   // Testing Node class
   cout <<  "The id of the node is: " << net.netNodes[0].getNodeId() << endl;
 
@@ -69,38 +69,33 @@ int main(int argc, char** argv){
   cout << "Decrypted text is: " << decrypted << endl;
 
   // Testing DH class
-  DHManager dhm1 = DHManager(paramKey);
-  dhm1.generateKey();
+  net.netNodes[0].dhm.generateKey();
+  net.netNodes[1].dhm.generateKey();
 
-  DHManager dhm2 = DHManager(paramKey);
-  dhm2.generateKey();
+  net.netNodes[0].dhm.deriveSharedKey(net.netNodes[1].dhm.getKey());
+  net.netNodes[1].dhm.deriveSharedKey(net.netNodes[0].dhm.getKey());
 
-  dhm1.deriveSharedKey(dhm2.getKey());
-  dhm2.deriveSharedKey(dhm1.getKey());
-
-  cout << "The shared Diffie-Hellman secret for DHManager 1: " << printDigest(dhm1.getSharedKey()) << endl;
-  cout << "The shared Diffie-Hellman secret for DHManager 2: " << printDigest(dhm2.getSharedKey()) << endl;
+  cout << "The shared Diffie-Hellman secret for DHManager 0: " << printDigest(net.netNodes[0].dhm.getSharedKey()) << endl;
+  cout << "The shared Diffie-Hellman secret for DHManager 1: " << printDigest(net.netNodes[1].dhm.getSharedKey()) << endl;
   
   unsigned char ciphertextDH[128];
   unsigned char decryptedDH[128];
   int dec_len_dh, ciph_len_dh;
   
-  ciph_len_dh = encrypt(dhm1.getSharedKey(), 32, dhm1.getSharedKey(), iv, ciphertextDH);
+  ciph_len_dh = encrypt(net.netNodes[0].getGroupKey(), 32, net.netNodes[0].dhm.getSharedKey(), iv, ciphertextDH);
 
-  dec_len_dh = decrypt(ciphertextDH, ciph_len_dh, dhm2.getSharedKey(), iv, decryptedDH);
+  dec_len_dh = decrypt(ciphertextDH, ciph_len_dh, net.netNodes[1].dhm.getSharedKey(), iv, decryptedDH);
   decrypted[dec_len] = '\0';
 
 
-  cout << "Group key encrypted by Node 1 with shared DH key: " << endl;
+  cout << "Group key encrypted by Node 0 with shared DH key: " << endl;
   BIO_dump_fp(stdout, (const char *) ciphertextDH, ciph_len_dh);
   
-  cout  << "Group key decrypted by Node 2 with shared DH key: ";
+  cout  << "Group key decrypted by Node 1 with shared DH key: ";
   cout << printDigest(decryptedDH) << endl; 
 
   EVP_cleanup();
   ERR_free_strings();
-
-
 
   cout << endl << endl;
   cout << "-------------- test tree table -------------" << endl;
@@ -108,19 +103,21 @@ int main(int argc, char** argv){
   LeafNode leaf_0;
   LeafNode leaf_1;
   leaf_0.id = 0; leaf_1.id = 1;
-  leaf_0.public_key = dhm1.getKey();
-  leaf_1.public_key = dhm2.getKey();  
+  leaf_0.public_key = NULL;
+  leaf_1.public_key = NULL;
+  leaf_0.public_key = net.netNodes[0].dhm.getKey();
+  leaf_1.public_key = net.netNodes[1].dhm.getKey();  
 
 
   cout << "   leaf 0 id = " << leaf_0.id << endl;
 
   cout << "   redoing DH test with leaf node param" << endl << endl;
 
-  dhm1.deriveSharedKey(leaf_1.public_key);
-  dhm2.deriveSharedKey(leaf_0.public_key);
+  net.netNodes[1].dhm.deriveSharedKey(leaf_0.public_key);
+  net.netNodes[0].dhm.deriveSharedKey(leaf_1.public_key);
 
-  cout << "   The shared Diffie-Hellman secret for DHManager 1: " << printDigest(dhm1.getSharedKey()) << endl;
-  cout << "   The shared Diffie-Hellman secret for DHManager 2: " << printDigest(dhm2.getSharedKey()) << endl;
+  cout << "   The shared Diffie-Hellman secret for DHManager 0: " << printDigest(net.netNodes[0].dhm.getSharedKey()) << endl;
+  cout << "   The shared Diffie-Hellman secret for DHManager 1: " << printDigest(net.netNodes[1].dhm.getSharedKey()) << endl;
   cout << endl;
 
   cout << "   making leaf pair" << endl;
@@ -135,28 +132,7 @@ int main(int argc, char** argv){
   Table credenza;
   credenza.insert(pair<string, LeafPair>("0", entry) );
   cout << "   table spot 0 entry 1 id:" << (credenza.find("0")->second)[1].id << endl;
-
-  
-  
   cout << endl << "Goodbye." << endl << endl;
+  
   return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

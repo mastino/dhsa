@@ -1,7 +1,8 @@
 #include "node.h"
 
-Node::Node(int id){
-  nodeId = id;  
+Node::Node(int id, EVP_PKEY *params){
+  nodeId = id;
+  dhm = DHManager(params);
 }
 
 int Node::getNodeId(){
