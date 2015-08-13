@@ -24,13 +24,12 @@ public:
  
   int getID();
   EVP_PKEY* getPublicKey();
-  // return true unless root
-  bool getParentNode(TreeNode* parent);
-  // return false and point to null
-  bool getLeftChild(TreeNode* left);
-  bool getRightChild(TreeNode* right);
+  TreeNode* getParentNode();
+  TreeNode* getLeftChild();
+  TreeNode* getRightChild();
 
   bool isLeaf();  
+  string getBinCode();
 
   void setID(int new_id);
   void setPublicKey(EVP_PKEY* new_pkey);

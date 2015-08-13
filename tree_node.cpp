@@ -12,10 +12,6 @@ TreeNode::TreeNode() {
   parent_node = NULL; 
 }
 
-TreeNode::TreeNode(TreeNode* parent) {
-  parent_node = parent; 
-}
-
 TreeNode::~TreeNode() {
   //recursi through children?
 }

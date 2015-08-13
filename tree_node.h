@@ -20,15 +20,16 @@ protected:
   TreeNode *parent_node;
 public:
   TreeNode();
-  TreeNode(TreeNode* parent);
   ~TreeNode();
   
   //returns false if root otherwise true
-  virtual bool getParentNode(TreeNode* parent){}
-  virtual bool getLeftChild(TreeNode* left){}
-  virtual bool getRightChild(TreeNode* right){}
+  virtual TreeNode* getParentNode(){}
+  virtual TreeNode* getLeftChild(){}
+  virtual TreeNode* getRightChild(){}
 
   virtual bool isLeaf(){}
+  virtual int getID(){}
+  virtual string getBinCode(){}
 
 };
 

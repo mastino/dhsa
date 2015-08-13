@@ -19,19 +19,20 @@ private:
   TreeNode *left_child, *right_child;
 public:
   MiddleNode();
-  MiddleNode(string new_bin, string new_dec, TreeNode* parent, TreeNode* left, TreeNode* right);
+  MiddleNode(string new_bin, string new_dec, TreeNode *parent, TreeNode *left, TreeNode *right);
   ~MiddleNode();
 
-  void getKey(unsigned char* key_copy);
+  unsigned char* getKey();
   string getBinCode();
   string getDecCode();
   // return true unless root
-  bool getParentNode(TreeNode* parent);
+  TreeNode* getParentNode();
   // return true if child exists
-  bool getLeftChild(TreeNode* left);
-  bool getRightChild(TreeNode* right);
+  TreeNode* getLeftChild();
+  TreeNode* getRightChild();
 
   bool isLeaf();
+  int getID();
 
   void setKey(unsigned char* new_key);
   void setBinCode(string new_bin);

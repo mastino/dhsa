@@ -11,7 +11,7 @@ MiddleNode::MiddleNode() {
   right_child = left_child = NULL;
 }
 
-MiddleNode::MiddleNode(string new_bin, string new_dec, TreeNode* parent, TreeNode* left, TreeNode* right) {
+MiddleNode::MiddleNode(string new_bin, string new_dec, TreeNode *parent, TreeNode *left, TreeNode *right) {
   bin_code = new_bin;
   dec_code = new_dec;
   parent_node = parent;
@@ -23,13 +23,8 @@ MiddleNode::~MiddleNode() {
 
 }
 
-void MiddleNode::getKey(unsigned char* key_copy) {
-  int i = 0;
-
-  while(key[i] != '\0') {
-    key_copy[i] = key[i];
-    i++;
-  }
+unsigned char* MiddleNode::getKey() {
+  return key;
 }
 
 string MiddleNode::getBinCode() {
@@ -40,34 +35,29 @@ string MiddleNode::getDecCode() {
   return dec_code;
 }
 
-// return true unless root
-bool MiddleNode::getParentNode(TreeNode* parent) {
-  parent = parent_node;
-  return !(parent_node == NULL);
+TreeNode* MiddleNode::getParentNode() {
+  return parent_node;
 }
 
-// return true if child exists
-bool MiddleNode::getLeftChild(TreeNode* left) {
-  left = left_child;
-  return !(left_child == NULL);
+TreeNode* MiddleNode::getLeftChild() {
+  return left_child;
 }
 
-bool MiddleNode::getRightChild(TreeNode* right) {
-  right = right_child;
-  return !(right_child == NULL);
+TreeNode* MiddleNode::getRightChild() {
+  return right_child;
 }
 
 bool MiddleNode::isLeaf() {
   return false;
 }
 
-void MiddleNode::setKey(unsigned char* new_key) {
-  int i = 0;
+//middle nodes don't have ID
+int MiddleNode::getID() {
+  return -1;;
+}
 
-  while(new_key[i] != '\0') {
-    key[i] = new_key[i];
-    i++;
-  }
+void MiddleNode::setKey(unsigned char* new_key) {
+  key = new_key;
 }
 
 void MiddleNode::setBinCode(string new_bin) {
