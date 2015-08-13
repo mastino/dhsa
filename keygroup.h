@@ -1,5 +1,7 @@
 #include "onewayhash.h"
-#include "tree_table.h"
+#include "tree_node.h"
+#include "leaf_node.h"
+#include "middle_node.h"
 
 class KeyGroup{
 private:  
@@ -10,11 +12,11 @@ private:
   TreeNode* findReplyingNode();
 
 public:
-  void KeyGroup();
-  void ~KeyGroup();
+  KeyGroup();
+  ~KeyGroup();
   void cycleGroupKey();
   void setGroupKey(unsigned char *newKey);
   int setRootNode(TreeNode* new_root_node);
   unsigned char* getGroupKey();
-  int addLeafNode(TreNode* new_leaf);
+  int addLeafNode(TreeNode* new_leaf);
 };

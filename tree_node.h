@@ -19,16 +19,16 @@ class TreeNode {
 protected:
   TreeNode *parent_node;
 public:
-  inline TreeNode() { parent_node = NULL; }
-  inline TreeNode(TreeNode* parent) { parent_node = parent; }
+  TreeNode();
+  TreeNode(TreeNode* parent);
   ~TreeNode();
   
   //returns false if root otherwise true
-  virtual bool getParentNode(TreeNode* parent);
-  virtual bool getLeftChild(TreeNode* left);
-  virtual bool getRightChild(TreeNode* right);
+  virtual bool getParentNode(TreeNode* parent){}
+  virtual bool getLeftChild(TreeNode* left){}
+  virtual bool getRightChild(TreeNode* right){}
 
-  virtual bool isLeaf();
+  virtual bool isLeaf(){}
 
 };
 

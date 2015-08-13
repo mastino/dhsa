@@ -4,6 +4,11 @@
 #include "network.h"
 #include "aes.h"
 #include "tree_table.h"
+#include "tree_node.h"
+#include "leaf_node.h"
+#include "middle_node.h"
+#include <string>
+
 
 using namespace std;
 
@@ -98,40 +103,27 @@ int main(int argc, char** argv){
   ERR_free_strings();
 
   cout << endl << endl;
-  cout << "-------------- test tree table -------------" << endl;
-  cout << "   making leaf nodes ids 0 and 1; both using respective dhm keys" << endl;
-  LeafNode leaf_0;
-  LeafNode leaf_1;
-  leaf_0.id = 0; leaf_1.id = 1;
-  leaf_0.public_key = NULL;
-  leaf_1.public_key = NULL;
-  leaf_0.public_key = net.netNodes[0].dhm.getKey();
-  leaf_1.public_key = net.netNodes[1].dhm.getKey();  
+  cout << "-------------- test tree nodes -------------" << endl;
+
+  cout << "leaf node:"  << endl;
+  LeafNode* leaf_0 = new LeafNode();
+  leaf_0->setID(0);
+  cout << "  leaf id: " << leaf_0->getID() << endl;
+  cout << "  leaf 0 is a leaf? ";
+  if (leaf_0->isLeaf()) cout << "yes" << endl;
+  else cout << "no" << endl;
+  
+  cout << "middle node:"  << endl;
+  MiddleNode* middle_0 = new MiddleNode();
+  middle_0->setKey((unsigned char*)"ABCDEFGHIJK");
+  unsigned char* print_key;
+  middle_0->getKey(print_key);
+  cout << "  middle 0 key: " << print_key << endl;
+  cout << "  middle 0 is a leaf? ";
+  if (leaf_0->isLeaf()) cout << "yes" << endl;
+  else cout << "no" << endl;
 
 
-  cout << "   leaf 0 id = " << leaf_0.id << endl;
-
-  cout << "   redoing DH test with leaf node param" << endl << endl;
-
-  net.netNodes[1].dhm.deriveSharedKey(leaf_0.public_key);
-  net.netNodes[0].dhm.deriveSharedKey(leaf_1.public_key);
-
-  cout << "   The shared Diffie-Hellman secret for DHManager 0: " << printDigest(net.netNodes[0].dhm.getSharedKey()) << endl;
-  cout << "   The shared Diffie-Hellman secret for DHManager 1: " << printDigest(net.netNodes[1].dhm.getSharedKey()) << endl;
-  cout << endl;
-
-  cout << "   making leaf pair" << endl;
-  LeafPair entry;
-  entry.push_back(leaf_0);
-  entry.push_back(leaf_1);
-  cout << "   leaf pair item 0: " << entry[0].id << endl;
-  cout << "   leaf pair item 1:" << entry[1].id << endl;
-  cout << endl;
-
-  cout << "   making table size 1" << endl;
-  Table credenza;
-  credenza.insert(pair<string, LeafPair>("0", entry) );
-  cout << "   table spot 0 entry 1 id:" << (credenza.find("0")->second)[1].id << endl;
   cout << endl << "Goodbye." << endl << endl;
   
   return 0;

@@ -3,25 +3,23 @@
 
 using namespace std;
 
-void KeyGroup::KeyGroup() {
-  root_node = new TreeNode;
-  root_node->leaf_node = NULL;
-  root_node->middle_node.bin_code = "0";
-  root_node->middle_node.dec_code = "0";
-  root_node->middle_node.parent_node = NULL;
+KeyGroup::KeyGroup() {
+  root_node = new MiddleNode("0", "0", NULL, NULL, NULL);
+  
 }
 
-void KeyGroup::~KeyGroup() {
+KeyGroup::~KeyGroup() {
   //recusively delete nodes
 }
 
 void KeyGroup::cycleGroupKey(){
   getSha256Digest(groupKey);
+//  root_node.setKey(groupKey);
 }
 
 void KeyGroup::setGroupKey(unsigned char *newKey){
   groupKey = newKey;
-  
+  //root_node.setKey(groupKey);
 }
 
 unsigned char* KeyGroup::getGroupKey(){
@@ -32,18 +30,15 @@ unsigned char* KeyGroup::getGroupKey(){
 //pre new_root_node is middle node with key and children
 //post root_node assigned data in new_root_node, bin_code and dec_ccode are "-"
 //returns 0 for failure 1 for success
-int KeGroup::setRootNode(TreeNode* new_root_node) {
-  
-  if(new_root_node->middle_node == NULL)
+int KeyGroup::setRootNode(TreeNode* new_root_node) {
+/*  
+  if(new_root_node.isLeaf())
     return 0;
   
-  root_node->leaf_node = NULL;
-  root_node->middle_node.key = new_root_node->middle_node.key; 
-  root_node->middle_node.left_child = new_root_node->middle_node.left_child;
-  root_node->middle_node.right_child = new_root_node->middle_node.right_child;
-  root_node->middle_node.bin_code = "0";
-  root_node->middle_node.dec_code = "0";
-  
+  root_node = new_root_node;
+  root_node.setBinCode("0");
+  root_node.setDecCode("0");
+  */
   return 1;
 
 }
@@ -52,37 +47,30 @@ int KeGroup::setRootNode(TreeNode* new_root_node) {
 //pre public key and id are defined
 //post parent node is assigned to new leaf
 //     new keys are created as necessary
-int KeGroup::addLeafNode(TreeNode* new_leaf) {
-
-  if(new_leaf->leaf_node == NULL)
+int KeyGroup::addLeafNode(TreeNode* new_leaf) {
+/*
+  if( !(new_leaf.isLeaf()) )
     return 0;
 
 
   // find spot for new tree node
-  TreeNode* replying_node = findReplyingNode();  
-  TreeNode* new_middle = new TreeNode;
-  new_middle->leaf_node = NULL;
-  new_middle->middle_node = new MiddleNode;
-  new_middle->middle_node.key = //TODO
-  new_middle->middle_node.bin_code = //TODO
-  new_middle->middle_node.dec_code = //TODO
-  new_middle->middle_node.parent_node = replying_node->leaf_node.parent_node;
-  new_middle->middle_node.right_child = 
-  new_middle->middle_node.left_child = 
+  TreeNode* replying_node = findReplyingNode();
 
+  //TODO generate new codes
 
-  
-  // update keys
+  //TODO update keys
 
-  // add node
-  
+  TreeNode* new_middle = new MiddleNode(new_bin, new_dec, replying_node.getParentNode(), replying_node, new_leaf);
+*/
+  return 1;  
+
 } //End addLeafNode
 
 //locates next place to insert a leaf
 //returns the new leaf's soon-to-be sibling
 //  if NULL returned there was an error
 TreeNode* KeyGroup::findReplyingNode() {
-
+/*
   TreeNode* tracking_node = NULL;
   TreeNode* replying_node = NULL;
   queue <TreeNode*> search_queue;
@@ -94,24 +82,25 @@ TreeNode* KeyGroup::findReplyingNode() {
     tracking_node = search_queue.front();
     search_queue.pop();    
 
-    left_is_leaf  = (tracking_node->left_child->leaf_node  != NULL);
-    right_is_leaf = (tracking_node->right_child->leaf_node != NULL);
+    left_is_leaf  = (tracking_node->getLeftChild()).isLeaf();
+    right_is_leaf = (tracking_node->getRightChild()).isLeaf();
 
     if( left_is_leaf && right_is_leaf )
-       replying_node = tracking_node->left_child;
+       replying_node = tracking_node->getLeftChild();
     else if( left_is_leaf && !right_is_leaf )
-       replying_node = tracking_node->left_child;
+       replying_node = tracking_node->getLeftChild();
     else if( !left_is_leaf && right_is_leaf )
-       replying_node = tracking_node->right_child;
+       replying_node = tracking_node->getRightChild();
     else if( !left_is_leaf && !right_is_leaf ){
-       search_queue.push(tracking_node->left_child);
-       search_queue.push(tracking_node->right_child);
+       search_queue.push(tracking_node->getLeftChild());
+       search_queue.push(tracking_node->getRightChild());
     }
 
   }
 
   return replying_node;
-
+*/
+ return NULL;
 } //End findReplyingNode
 
 
