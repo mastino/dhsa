@@ -27,13 +27,21 @@ public:
   TreeNode* getParentNode();
   TreeNode* getLeftChild();
   TreeNode* getRightChild();
-
-  bool isLeaf();  
+  string getDecCode();
   string getBinCode();
+
+  bool isLeaf();
 
   void setID(int new_id);
   void setPublicKey(EVP_PKEY* new_pkey);
   void setParentNode(TreeNode* new_parent);
+ 
+  virtual void setKey(unsigned char* new_key){}
+  virtual void setBinCode(string new_bin){}
+  virtual void setDecCode(string new_dec){}
+  virtual void setLeftChild(TreeNode* new_l_child){}
+  virtual void setRightChild(TreeNode* new_r_child){}
+
 
 };
 

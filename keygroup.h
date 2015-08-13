@@ -6,17 +6,17 @@
 class KeyGroup{
 private:  
   unsigned char *groupKey;
-  TreeNode *root_node;
+  MiddleNode* root_node;
   int leaf_count;
   
-  TreeNode* findReplyingNode();
+  TreeNode* findReplyingNode(bool& right_branch);
 
 public:
   KeyGroup();
   ~KeyGroup();
   void cycleGroupKey();
   void setGroupKey(unsigned char *newKey);
-  int setRootNode(TreeNode* new_root_node);
+  int setRootNode(MiddleNode* new_root_node);
   unsigned char* getGroupKey();
-  int addLeafNode(TreeNode* new_leaf);
+  int addLeafNode(LeafNode* new_leaf);
 };

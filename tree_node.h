@@ -21,15 +21,23 @@ protected:
 public:
   TreeNode();
   ~TreeNode();
-  
-  //returns false if root otherwise true
+
+  virtual bool isLeaf(){}  
+
   virtual TreeNode* getParentNode(){}
   virtual TreeNode* getLeftChild(){}
   virtual TreeNode* getRightChild(){}
-
-  virtual bool isLeaf(){}
   virtual int getID(){}
   virtual string getBinCode(){}
+  virtual string getDecCode(){}
+
+  virtual void setKey(unsigned char* new_key){}
+  virtual void setBinCode(string new_bin){}
+  virtual void setDecCode(string new_dec){}
+  virtual void setParentNode(TreeNode* new_parent){}
+  virtual void setLeftChild(TreeNode* new_l_child){}
+  virtual void setRightChild(TreeNode* new_r_child){}
+
 
 };
 

@@ -61,6 +61,10 @@ string LeafNode::getBinCode() {
   return "X";
 }
 
+string LeafNode::getDecCode() {
+  return "X";
+}
+
 void LeafNode::setID(int new_id) {
   id = new_id;
 }

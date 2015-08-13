@@ -25,9 +25,7 @@ public:
   unsigned char* getKey();
   string getBinCode();
   string getDecCode();
-  // return true unless root
   TreeNode* getParentNode();
-  // return true if child exists
   TreeNode* getLeftChild();
   TreeNode* getRightChild();
 
