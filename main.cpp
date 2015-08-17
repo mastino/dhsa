@@ -4,10 +4,17 @@
 #include "network.h"
 #include "aes.h"
 #include "tree_table.h"
+#include "tree_node.h"
+#include "leaf_node.h"
+#include "middle_node.h"
+#include <string>
+
 
 using namespace std;
 
+
 int main(int argc, char** argv){
+ 
   EVP_PKEY *paramKey = NULL;
   EVP_PKEY_CTX *paramControl = EVP_PKEY_CTX_new_id(EVP_PKEY_DH, NULL);
   EVP_PKEY_paramgen_init(paramControl);
@@ -104,40 +111,94 @@ int main(int argc, char** argv){
   ERR_free_strings();
 
   cout << endl << endl;
-  cout << "-------------- test tree table -------------" << endl;
-  cout << "   making leaf nodes ids 0 and 1; both using respective dhm keys" << endl;
+  cout << "-------------- test tree nodes -------------" << endl;
+
+  cout << "leaf node:"  << endl;
   LeafNode leaf_0;
-  LeafNode leaf_1;
-  leaf_0.id = 0; leaf_1.id = 1;
-  leaf_0.public_key = NULL;
-  leaf_1.public_key = NULL;
-  leaf_0.public_key = net.netNodes[0].dhm.getKey();
-  leaf_1.public_key = net.netNodes[1].dhm.getKey();  
-
-
-  cout << "   leaf 0 id = " << leaf_0.id << endl;
-
-  cout << "   redoing DH test with leaf node param" << endl << endl;
-
-  net.netNodes[1].dhm.deriveSharedKey(leaf_0.public_key);
-  net.netNodes[0].dhm.deriveSharedKey(leaf_1.public_key);
-
-  cout << "   The shared Diffie-Hellman secret for DHManager 0: " << printDigest(net.netNodes[0].dhm.getSharedKey()) << endl;
-  cout << "   The shared Diffie-Hellman secret for DHManager 1: " << printDigest(net.netNodes[1].dhm.getSharedKey()) << endl;
+  leaf_0.setID(0);
+  cout << "  leaf 0 id: " << leaf_0.getID() << endl;
+  LeafNode leaf_1; leaf_1.setID(1);
+  cout << "  leaf 1 id: " << leaf_1.getID() << endl;
+  LeafNode leaf_2; leaf_2.setID(2);
+  cout << "  leaf 2 id: " << leaf_2.getID() << endl;
+  cout << "  leaf 0 is a leaf? ";
+  if (leaf_0.isLeaf()) cout << "yes" << endl;
+  else cout << "no" << endl;
+  cout << endl;  
+  cout << "middle node:"  << endl;
+  MiddleNode middle_0;
+  unsigned char* fake_key = (unsigned char*) "ABCDEFGHIJK";
+  middle_0.setKey(fake_key);
+  cout << "  middle 0 key: " << middle_0.getKey() << endl;
+  cout << "  middle 0 is a leaf? ";
+  if (middle_0.isLeaf()) cout << "yes" << endl;
+  else cout << "no" << endl;
+  middle_0.setBinCode("01");
+  cout << "  middle 0 bin code: " << middle_0.getBinCode() << endl;
+  cout << "  (should be '01')"  << endl;
+  middle_0.setDecCode("04");
+  cout << "  middle 0 dec code: " << middle_0.getDecCode() << endl;
+  cout << "  (should be '04')"  << endl;
   cout << endl;
+  cout << "tree node:" << endl;
+  cout << "  making tree..." << endl;
+  MiddleNode root_node = MiddleNode("0", "0", NULL, &middle_0, &leaf_0);
+  middle_0.setParentNode(&root_node);
+  leaf_0.setParentNode(&root_node);
+  cout << "  root node bin code: " << root_node.getBinCode() << endl;
+  cout << "  (should be '0')"  << endl;
+  middle_0.setLeftChild(&leaf_1);
+  leaf_1.setParentNode(&middle_0);
+  middle_0.setRightChild(&leaf_2);
+  leaf_2.setParentNode(&middle_0);
+  cout << "  middle 0 left child ID: " << middle_0.getLeftChild()->getID() << endl;
+  cout << "  (should be 1)" << endl;
+  cout << "  traversing..." << endl;
+  TreeNode *traveller = new TreeNode();
+  traveller = &root_node;
+  if (traveller->getLeftChild() != NULL) {
+    traveller = traveller->getLeftChild();
+    cout << "    went left" << endl;
+    cout << "    traversal at ID: " << traveller->getID() << endl;
+    cout << "            BinCode: " << traveller->getBinCode() << endl;
+  } else {
+    cout << "    oops!" << endl;
+  }
+  if (traveller->getRightChild() != NULL) {
+    traveller = traveller->getRightChild();
+    cout << "    went right" << endl;
+    cout << "    traversal at ID: " << traveller->getID() << endl;
+    cout << "            BinCode: " << traveller->getBinCode() << endl;
+  } else {
+    cout << "    oops!" << endl;
+  }
+  if (traveller->getParentNode() != NULL) {
+    traveller = traveller->getParentNode();
+    cout << "    went up" << endl;
+    cout << "    traversal at ID: " << traveller->getID() << endl;
+    cout << "            BinCode: " << traveller->getBinCode() << endl;
+  } else {
+    cout << "    oops!" << endl;
+  }
+  if (traveller->getParentNode() != NULL) {
+    traveller = traveller->getParentNode();
+    cout << "    went up" << endl;
+    cout << "    traversal at ID: " << traveller->getID() << endl;
+    cout << "            BinCode: " << traveller->getBinCode() << endl;
+  } else {
+    cout << "    oops!" << endl;
+  }
+  if (traveller->getParentNode() != NULL) {
+    traveller = traveller->getParentNode();
+    cout << "    went up" << endl;
+    cout << "    traversal at ID: " << traveller->getID() << endl;
+    cout << "            BinCode: " << traveller->getBinCode() << endl;
+  } else {
+    cout << "    oops!" << endl;
+  }
 
-  cout << "   making leaf pair" << endl;
-  LeafPair entry;
-  entry.push_back(leaf_0);
-  entry.push_back(leaf_1);
-  cout << "   leaf pair item 0: " << entry[0].id << endl;
-  cout << "   leaf pair item 1:" << entry[1].id << endl;
-  cout << endl;
+ 
 
-  cout << "   making table size 1" << endl;
-  Table credenza;
-  credenza.insert(pair<string, LeafPair>("0", entry) );
-  cout << "   table spot 0 entry 1 id:" << (credenza.find("0")->second)[1].id << endl;
   cout << endl << "Goodbye." << endl << endl;
   
   return 0;

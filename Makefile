@@ -7,8 +7,8 @@ new:
 	make clean
 	make dhsatest
 
-dhsatest: network.o node.o keygroup.o onewayhash.o aes.o dhmanager.o
-	$(CC) -o dhsatest network.o node.o keygroup.o onewayhash.o aes.o dhmanager.o main.cpp -lcrypto -lssl
+dhsatest: network.o node.o keygroup.o onewayhash.o aes.o dhmanager.o tree_node.o leaf_node.o middle_node.o
+	$(CC) -o dhsatest network.o node.o keygroup.o onewayhash.o aes.o dhmanager.o tree_node.o leaf_node.o middle_node.o main.cpp -lcrypto -lssl
 dhmanager.o:
 	$(CC) -c dhmanager.cpp -lcrypto -lssl
 aes.o:
@@ -21,5 +21,11 @@ network.o:
 	$(CC) -c network.cpp
 node.o:
 	$(CC) -c node.cpp
+tree_node.o:
+	$(CC) -c tree_node.cpp
+leaf_node.o:
+	$(CC) -c leaf_node.cpp
+middle_node.o:
+	$(CC) -c middle_node.cpp
 clean:
 	$(RM) main *.o *~

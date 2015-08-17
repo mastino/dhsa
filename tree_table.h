@@ -3,7 +3,7 @@
  * definitions to manage tree information
  * Author: Brian Gravelle Caes Lab University of Oregon
  * Date Started: 10 August 2015
- * Last Update:  10 August 2015
+ * Last Update:  12 August 2015
  *
  *
 */
@@ -18,12 +18,6 @@
 #include <map>
 
 using namespace std;
-
-
-struct LeafNode {
-  int id;
-  EVP_PKEY *public_key;
-};
 
 typedef vector<LeafNode> LeafPair;
 typedef map < string, LeafPair > Table;
