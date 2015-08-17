@@ -17,7 +17,7 @@ void KeyGroup::cycleGroupKey(){
   root_node->setKey(groupKey);
 
   MiddleNode* tracking_node = NULL;
-  queue <TreeNode*> travel_queue;
+  queue <MiddleNode*> travel_queue;
   bool left_is_leaf, right_is_leaf;
 
   search_queue.push(root_node);
@@ -88,10 +88,10 @@ int KeyGroup::addLeafNode(LeafNode* new_leaf, LeafNode* reply_node, bool right_b
   //update keys
   cycleGroupKey();
 
-  TreeNode* new_middle = new MiddleNode(new_bin, new_dec, replying_node->getParentNode(), replying_node, new_leaf);
+  MiddleNode* new_middle = new MiddleNode(new_bin, new_dec, replying_node->getParentNode(), replying_node, new_leaf);
   if (right_branch) replying_node->getParentNode()->setRightChild(new_middle);
   else replying_node->getParentNode()->setLeftChild(new_middle);
-  //TODO new_middle->setKey(???);
+  new_middle->renewKey(groupKey, KEY_LEN);
   replying_node->setParentNode(new_middle);
   new_leaf->setParentNode(new_middle);
 
