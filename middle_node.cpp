@@ -9,6 +9,7 @@ using namespace std;
 
 MiddleNode::MiddleNode() {
   right_child = left_child = NULL;
+  key = new unsigned char[KEY_LEN];
 }
 
 MiddleNode::MiddleNode(string new_bin, string new_dec, TreeNode *parent, TreeNode *left, TreeNode *right) {
@@ -17,6 +18,7 @@ MiddleNode::MiddleNode(string new_bin, string new_dec, TreeNode *parent, TreeNod
   parent_node = parent;
   left_child = left;
   right_child = right;
+  key = new unsigned char[KEY_LEN];
 }
 
 MiddleNode::~MiddleNode() {
@@ -80,6 +82,18 @@ void MiddleNode::setRightChild(TreeNode* new_r_child) {
   right_child = new_r_child;
 }
 
-
+void MiddleNode::renewKey(unsigned char* group_key, int key_length) {
+  //Key = f(K_group xor dec_Code)
+  int dec_length = dec_code.length();
+  unsigned char*  dec_chars = new char[dec_length + 1];
+  int i;
+  for(i = 1; i <= dec_length; i++) {
+    key[key_length - i] = group_key[key_length - i] ^ dec_chars[dec_length - i];
+  }
+  for(i; i <= key_length; i++) {
+    key[key_length - i] = group_key[key_length - i]; //remaining bytes are oxr'ed with 0
+  }
+  getSha256Digest(key);
+}
 
 

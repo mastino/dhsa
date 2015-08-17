@@ -15,6 +15,29 @@ KeyGroup::~KeyGroup() {
 void KeyGroup::cycleGroupKey(){
   getSha256Digest(groupKey);
   root_node->setKey(groupKey);
+
+  MiddleNode* tracking_node = NULL;
+  queue <TreeNode*> travel_queue;
+  bool left_is_leaf, right_is_leaf;
+
+  search_queue.push(root_node);
+  while( (replying_node == NULL) && (!search_queue.empty()) ) {
+
+    tracking_node = travel_queue.front();
+    tracking_node.renewKey(groupKey, KEY_LEN);
+
+    left_is_leaf  = (tracking_node->getLeftChild())->isLeaf();
+    right_is_leaf = (tracking_node->getRightChild())->isLeaf();
+
+    if( !left_is_leaf ){
+      travel_queue.push(tracking_node->getLeftChild());
+    } 
+    if( !right_is_leaf ) {
+      travel_queue.push(tracking_node->getRightChild());
+    }
+
+    travel_queue.pop();
+  }
 }
 
 void KeyGroup::setGroupKey(unsigned char *newKey){
@@ -47,30 +70,28 @@ int KeyGroup::setRootNode(MiddleNode* new_root_node) {
 //pre public key and id are defined
 //post parent node is assigned to new leaf
 //     new keys are created as necessary
-int KeyGroup::addLeafNode(LeafNode* new_leaf) {
+int KeyGroup::addLeafNode(LeafNode* new_leaf, LeafNode* reply_node, bool right_branch) {
 
   if( !(new_leaf->isLeaf()) )
     return 0;
+  if( reply_node>isLeaf() )
+    return 0;
 
-
-  // find spot for new tree node
-  bool right_branch = true;
-  LeafNode* replying_node = (LeafNode*)findReplyingNode(right_branch);
-  
-  //TODO generate new codes
+  // generate new codes
   cycleGroupKey();
   string new_dec = replying_node->getParentNode()->getDecCode();
   string new_bin = replying_node->getParentNode()->getBinCode();
   if (right_branch) new_bin.append("1");
   else new_bin.append("0");   
-  
+  new_dec.append( to_string(rand() % 10) );
 
-  //TODO update keys
+  //update keys
+  cycleGroupKey();
 
   TreeNode* new_middle = new MiddleNode(new_bin, new_dec, replying_node->getParentNode(), replying_node, new_leaf);
   if (right_branch) replying_node->getParentNode()->setRightChild(new_middle);
   else replying_node->getParentNode()->setLeftChild(new_middle);
-  //TODO new_middle->estKey(???);
+  //TODO new_middle->setKey(???);
   replying_node->setParentNode(new_middle);
   new_leaf->setParentNode(new_middle);
 
@@ -81,6 +102,8 @@ int KeyGroup::addLeafNode(LeafNode* new_leaf) {
 //locates next place to insert a leaf
 //returns the new leaf's soon-to-be sibling
 //  if NULL returned there was an error
+//
+// this may be unecessary
 TreeNode* KeyGroup::findReplyingNode(bool& right_branch) {
 
   TreeNode* tracking_node = NULL;

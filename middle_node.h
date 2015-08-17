@@ -8,6 +8,9 @@
 #define MIDDLE_NODE
 
 #include "tree_node.h"
+#include "onewayhash.h"
+
+#define KEN_LEN 32
 
 using namespace std;
 
@@ -39,6 +42,7 @@ public:
   void setLeftChild(TreeNode* new_l_child);
   void setRightChild(TreeNode* new_r_child);
 
+  void renewKey(unsigned char* group_key, int key_length);
 
 };
 
