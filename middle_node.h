@@ -10,7 +10,7 @@
 #include "tree_node.h"
 #include "onewayhash.h"
 
-#define KEN_LEN 32
+#define KEY_LEN 32
 
 using namespace std;
 
@@ -26,6 +26,7 @@ public:
   ~MiddleNode();
 
   unsigned char* getKey();
+  void copyKey(unsigned char* copy_key);
   string getBinCode();
   string getDecCode();
   TreeNode* getParentNode();

@@ -1,8 +1,5 @@
 
 #include "keygroup.h"
-#include <queue>
-
-using namespace std;
 
 KeyGroup::KeyGroup() {
   root_node = new MiddleNode("0", "0", NULL, NULL, NULL);
@@ -13,31 +10,40 @@ KeyGroup::~KeyGroup() {
 }
 
 void KeyGroup::cycleGroupKey(){
-  getSha256Digest(groupKey);
+  //getSha256Digest(groupKey);
   root_node->setKey(groupKey);
 
   MiddleNode* tracking_node = NULL;
   queue <MiddleNode*> travel_queue;
   bool left_is_leaf, right_is_leaf;
 
-  search_queue.push(root_node);
-  while( (replying_node == NULL) && (!search_queue.empty()) ) {
+  travel_queue.push(root_node);
+  while( !travel_queue.empty() ) {
 
     tracking_node = travel_queue.front();
-    tracking_node.renewKey(groupKey, KEY_LEN);
+    tracking_node->renewKey(groupKey, KEY_LEN);
+    
+    if ((tracking_node->getLeftChild()) != NULL)
+      left_is_leaf  = (tracking_node->getLeftChild())->isLeaf();
+    else
+      left_is_leaf = true; //prevents attempts to use left child
 
-    left_is_leaf  = (tracking_node->getLeftChild())->isLeaf();
-    right_is_leaf = (tracking_node->getRightChild())->isLeaf();
+    if ((tracking_node->getRightChild()) != NULL)  
+      right_is_leaf = (tracking_node->getRightChild())->isLeaf();
+    else
+      right_is_leaf = true; //prevents attempts to use right child
 
     if( !left_is_leaf ){
-      travel_queue.push(tracking_node->getLeftChild());
+      travel_queue.push((MiddleNode*)(tracking_node->getLeftChild()));
     } 
     if( !right_is_leaf ) {
-      travel_queue.push(tracking_node->getRightChild());
+      travel_queue.push((MiddleNode*)(tracking_node->getRightChild()));
     }
 
     travel_queue.pop();
   }
+
+  root_node->copyKey(groupKey);
 }
 
 void KeyGroup::setGroupKey(unsigned char *newKey){
@@ -74,25 +80,26 @@ int KeyGroup::addLeafNode(LeafNode* new_leaf, LeafNode* reply_node, bool right_b
 
   if( !(new_leaf->isLeaf()) )
     return 0;
-  if( reply_node>isLeaf() )
+  if( reply_node->isLeaf() )
     return 0;
 
   // generate new codes
   cycleGroupKey();
-  string new_dec = replying_node->getParentNode()->getDecCode();
-  string new_bin = replying_node->getParentNode()->getBinCode();
+  string new_dec = reply_node->getParentNode()->getDecCode();
+  string new_bin = reply_node->getParentNode()->getBinCode();
   if (right_branch) new_bin.append("1");
   else new_bin.append("0");   
-  new_dec.append( to_string(rand() % 10) );
+  string new_digit( 1, (char)(rand() % 10) + 0x30 );
+  new_dec.append( new_digit );
 
   //update keys
   cycleGroupKey();
 
-  MiddleNode* new_middle = new MiddleNode(new_bin, new_dec, replying_node->getParentNode(), replying_node, new_leaf);
-  if (right_branch) replying_node->getParentNode()->setRightChild(new_middle);
-  else replying_node->getParentNode()->setLeftChild(new_middle);
+  MiddleNode* new_middle = new MiddleNode(new_bin, new_dec, reply_node->getParentNode(), reply_node, new_leaf);
+  if (right_branch) reply_node->getParentNode()->setRightChild(new_middle);
+  else reply_node->getParentNode()->setLeftChild(new_middle);
   new_middle->renewKey(groupKey, KEY_LEN);
-  replying_node->setParentNode(new_middle);
+  reply_node->setParentNode(new_middle);
   new_leaf->setParentNode(new_middle);
 
   return 1;  
