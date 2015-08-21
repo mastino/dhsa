@@ -21,12 +21,22 @@ MiddleNode::MiddleNode(string new_bin, string new_dec, TreeNode *parent, TreeNod
   key = new unsigned char[KEY_LEN];
 }
 
+//WARNING this may cause memory leak if children aren't deleted
 MiddleNode::~MiddleNode() {
-
+  delete key;
+  right_child = NULL;
+  left_child = NULL;
 }
 
 unsigned char* MiddleNode::getKey() {
   return key;
+}
+
+//@pre copy key must have KEY_LEN spots
+void MiddleNode::copyKey(unsigned char* copy_key) {
+  for(int i = 0; i < KEY_LEN; i++) {
+     copy_key[i] = key[i];
+  }
 }
 
 string MiddleNode::getBinCode() {
@@ -58,8 +68,11 @@ int MiddleNode::getID() {
   return -1;;
 }
 
+//@pre new key must have KEY_LEN characters
 void MiddleNode::setKey(unsigned char* new_key) {
-  key = new_key;
+  for(int i = 0; i < KEY_LEN; i++) {
+     key[i] = new_key[i];
+  }
 }
 
 void MiddleNode::setBinCode(string new_bin) {
@@ -85,10 +98,12 @@ void MiddleNode::setRightChild(TreeNode* new_r_child) {
 void MiddleNode::renewKey(unsigned char* group_key, int key_length) {
   //Key = f(K_group xor dec_Code)
   int dec_length = dec_code.length();
-  unsigned char*  dec_chars = new char[dec_length + 1];
+  unsigned char*  dec_chars = new unsigned char[dec_length + 1];
+  dec_chars = (unsigned char*) dec_code.c_str();
+
   int i;
   for(i = 1; i <= dec_length; i++) {
-    key[key_length - i] = group_key[key_length - i] ^ dec_chars[dec_length - i];
+    key[key_length - i] = group_key[key_length - i] ^ (dec_chars[dec_length - i] - 0x30);
   }
   for(i; i <= key_length; i++) {
     key[key_length - i] = group_key[key_length - i]; //remaining bytes are oxr'ed with 0

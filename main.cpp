@@ -12,6 +12,8 @@
 
 using namespace std;
 
+void test_tree_nodes();
+
 
 int main(int argc, char** argv){
  
@@ -109,6 +111,17 @@ int main(int argc, char** argv){
 
   EVP_cleanup();
   ERR_free_strings();
+ 
+  test_tree_nodes();
+
+  cout << "Goodbye :)" << endl << endl;
+
+  return 0;
+
+}
+
+
+void test_tree_nodes() {
 
   cout << endl << endl;
   cout << "-------------- test tree nodes -------------" << endl;
@@ -197,9 +210,4 @@ int main(int argc, char** argv){
     cout << "    oops!" << endl;
   }
 
- 
-
-  cout << endl << "Goodbye." << endl << endl;
-  
-  return 0;
 }
