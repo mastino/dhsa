@@ -22,6 +22,7 @@ public:
   void cycleGroupKey();
   void setGroupKey(unsigned char *newKey);
   int setRootNode(MiddleNode* new_root_node);
+  void startTree(unsigned char* new_key, LeafNode* left_leaf, LeafNode* right_leaf);
   unsigned char* getGroupKey();
   int addLeafNode(LeafNode* new_leaf, LeafNode* reply_node, bool right_branch);
   int removeLeafNode(int id, unsigned char* new_key);

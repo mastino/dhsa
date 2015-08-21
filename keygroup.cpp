@@ -72,10 +72,25 @@ int KeyGroup::setRootNode(MiddleNode* new_root_node) {
 
 }
 
+void KeyGroup::startTree(unsigned char* new_key, LeafNode* left_leaf, LeafNode* right_leaf ) {
+
+  root_node->setLeftChild((TreeNode*)left_leaf);
+  root_node->setRightChild((TreeNode*)right_leaf);
+  leaf_count = 2;
+
+  setGroupKey(new_key);
+  cycleGroupKey();
+  
+}
+
+
 //adds new leaf to the tree
-//pre public key and id are defined
+//pre new leaf and reply node are defined
+//    right branch is true if reply node is right child of its parent
+//    at least 2 leaves exst in the tree and no middle node has a NULL child
 //post parent node is assigned to new leaf
 //     new keys are created as necessary
+//returns one for success 0 for failure
 int KeyGroup::addLeafNode(LeafNode* new_leaf, LeafNode* reply_node, bool right_branch) {
 
   if( !(new_leaf->isLeaf()) )
@@ -102,6 +117,8 @@ int KeyGroup::addLeafNode(LeafNode* new_leaf, LeafNode* reply_node, bool right_b
   reply_node->setParentNode(new_middle);
   new_leaf->setParentNode(new_middle);
 
+  leaf_count++;
+
   return 1;  
 
 } //End addLeafNode
@@ -110,6 +127,8 @@ int KeyGroup::addLeafNode(LeafNode* new_leaf, LeafNode* reply_node, bool right_b
 //removes leaf node and upddates keys
 //pre make new key first
 //    new_key is KEN_LEN chars
+//post leaf and parent middle node have been removed
+//     no middle node has NULL for child
 //returns 1 if success 0 if fail
 //TODO parent is root case or tree balancing on leave
 int KeyGroup::removeLeafNode(int id, unsigned char* new_key) {
@@ -148,6 +167,10 @@ int KeyGroup::removeLeafNode(int id, unsigned char* new_key) {
 
   setGroupKey(new_key);
   cycleGroupKey();
+
+  leaf_count--;
+
+  return 1;
 
 }
 
