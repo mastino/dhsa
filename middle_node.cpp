@@ -21,8 +21,11 @@ MiddleNode::MiddleNode(string new_bin, string new_dec, TreeNode *parent, TreeNod
   key = new unsigned char[KEY_LEN];
 }
 
+//WARNING this may cause memory leak if children aren't deleted
 MiddleNode::~MiddleNode() {
-
+  delete key;
+  right_child = NULL;
+  left_child = NULL;
 }
 
 unsigned char* MiddleNode::getKey() {

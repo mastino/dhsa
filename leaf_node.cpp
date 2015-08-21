@@ -29,6 +29,8 @@ LeafNode::LeafNode(int new_id, EVP_PKEY* new_key, TreeNode* parent) {
 
 LeafNode::~LeafNode() {
   EVP_PKEY_free(public_key);
+  parent_node = NULL;
+
 }
  
 int LeafNode::getID() {

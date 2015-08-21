@@ -24,6 +24,8 @@ public:
   int setRootNode(MiddleNode* new_root_node);
   unsigned char* getGroupKey();
   int addLeafNode(LeafNode* new_leaf, LeafNode* reply_node, bool right_branch);
+  int removeLeafNode(int id, unsigned char* new_key);
   TreeNode* findReplyingNode(bool& right_branch);
+  TreeNode* findLeafNode(int target_id);
 
 };

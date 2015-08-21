@@ -106,6 +106,51 @@ int KeyGroup::addLeafNode(LeafNode* new_leaf, LeafNode* reply_node, bool right_b
 
 } //End addLeafNode
 
+
+//removes leaf node and upddates keys
+//pre make new key first
+//    new_key is KEN_LEN chars
+//returns 1 if success 0 if fail
+//TODO parent is root case or tree balancing on leave
+int KeyGroup::removeLeafNode(int id, unsigned char* new_key) {
+
+  MiddleNode *parent, *grand_parent;
+  LeafNode *leaving_node;
+  TreeNode *sibling;
+  bool leaving_is_right, parent_is_right;
+
+  leaving_node = (LeafNode*)findLeafNode(id);
+
+  if( !(leaving_node->isLeaf()) )
+    return 0;
+
+  parent = (MiddleNode*)(leaving_node->getParentNode());
+  grand_parent = (MiddleNode*)(parent->getParentNode());
+
+  if( grand_parent == NULL )
+    return 0; //case parent is root, requires major tree reorganization
+
+  leaving_is_right = (parent->getRightChild()->getID() == id);
+  parent_is_right = (grand_parent->getRightChild()->getBinCode()).compare(parent->getBinCode()) == 0 ;
+  if(leaving_is_right)
+    sibling = parent->getLeftChild();
+  else 
+    sibling = parent->getRightChild();
+    
+  sibling->setParentNode(grand_parent);
+  if(parent_is_right)
+    grand_parent->setRightChild(sibling);
+  else
+    grand_parent->setLeftChild(sibling);
+
+  leaving_node->~LeafNode();
+  parent->~MiddleNode();
+
+  setGroupKey(new_key);
+  cycleGroupKey();
+
+}
+
 //locates next place to insert a leaf
 //returns the new leaf's soon-to-be sibling
 //  if NULL returned there was an error
@@ -148,6 +193,43 @@ TreeNode* KeyGroup::findReplyingNode(bool& right_branch) {
 } //End findReplyingNode
 
 
+//locates leaf by id (BFS)
+//returns the pointer to leaf
+//  if NULL then not found
+TreeNode* KeyGroup::findLeafNode(int target_id) {
+
+  TreeNode* tracking_node = NULL;
+  TreeNode* target_node = NULL;
+  queue <TreeNode*> search_queue;
+  int left_id, right_id;
+
+  search_queue.push(root_node);
+  while( (target_node == NULL) && (!search_queue.empty()) ) {
+
+    tracking_node = search_queue.front();
+    search_queue.pop();
+
+    left_id  = (tracking_node->getLeftChild())->getID();
+    right_id = (tracking_node->getRightChild())->getID();
+
+    if( left_id = target_id ) {
+       target_node = tracking_node->getLeftChild();
+    } else if( right_id = target_id ) {
+       target_node = tracking_node->getRightChild();
+    } 
+
+    if( left_id == -1 ) {
+       search_queue.push(tracking_node->getLeftChild());
+    } 
+    if( right_id == -1 ){
+       search_queue.push(tracking_node->getRightChild());
+    }
+
+  }
+
+  return target_node;
+
+} //End findLeavingNode
 
 
 
