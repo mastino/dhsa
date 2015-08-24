@@ -54,6 +54,10 @@ TreeNode* LeafNode::getRightChild() {
   return NULL;
 }
 
+unsigned char* LeafNode::getKey() {
+  return NULL;
+}
+
 bool LeafNode::isLeaf() {
   return true;
 }

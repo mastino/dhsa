@@ -1,6 +1,9 @@
 #include <openssl/evp.h>
 #include <openssl/dh.h>
 
+#ifndef DH_MANAGER
+#define DH_MANAGER
+
 class DHManager{
 private:
   EVP_PKEY_CTX *keyControl;
@@ -19,3 +22,6 @@ public:
   unsigned char* getSharedKey();
   void setSharedKey(EVP_PKEY *key);
 };
+
+
+#endif

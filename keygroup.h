@@ -6,6 +6,9 @@
 #include <string>
 #include <queue>
 
+#ifndef KEY_GROUP
+#define KEY_GROUP
+
 using namespace std;
 
 #define KEY_LEN 32  //bytes
@@ -24,9 +27,14 @@ public:
   int setRootNode(MiddleNode* new_root_node);
   void startTree(unsigned char* new_key, LeafNode* left_leaf, LeafNode* right_leaf);
   unsigned char* getGroupKey();
+  MiddleNode* getRootNode();
+  int getLeafCount();
   int addLeafNode(LeafNode* new_leaf, LeafNode* reply_node, bool right_branch);
   int removeLeafNode(int id, unsigned char* new_key);
   TreeNode* findReplyingNode(bool& right_branch);
-  TreeNode* findLeafNode(int target_id);
+  LeafNode* findLeafNode(int target_id);
 
 };
+
+
+#endif

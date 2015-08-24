@@ -7,16 +7,36 @@
 #include "tree_node.h"
 #include "leaf_node.h"
 #include "middle_node.h"
+#include "dhmanager.h"
+#include "keygroup.h"
 #include <string>
 
 
 using namespace std;
 
-void test_tree_nodes();
-
+void basicTest();
+void testTreeNodes();
+void buildTreeTest();
 
 int main(int argc, char** argv){
  
+  cout << endl << endl;
+  cout << "                  Testing DHSA" << endl;
+  cout << "-----------------------------------------------" << endl << endl;
+  
+  buildTreeTest();  
+
+  cout << endl << endl;
+  cout << "-----------------------------------------------" << endl;
+  cout << "                   Goodbye :) ";
+  cout << endl << endl << endl;
+
+  return 0;
+
+}
+
+void basicTest() { 
+
   EVP_PKEY *paramKey = NULL;
   EVP_PKEY_CTX *paramControl = EVP_PKEY_CTX_new_id(EVP_PKEY_DH, NULL);
   EVP_PKEY_paramgen_init(paramControl);
@@ -112,16 +132,10 @@ int main(int argc, char** argv){
   EVP_cleanup();
   ERR_free_strings();
  
-  test_tree_nodes();
-
-  cout << "Goodbye :)" << endl << endl;
-
-  return 0;
-
 }
 
 
-void test_tree_nodes() {
+void testTreeNodes() {
 
   cout << endl << endl;
   cout << "-------------- test tree nodes -------------" << endl;
@@ -211,3 +225,112 @@ void test_tree_nodes() {
   }
 
 }
+
+void buildTreeTest() {
+  
+  cout << endl << "----- Testing KeyGroup Joining and Leaving -----" << endl <<endl;
+
+  int numLeaves = 6;
+  int next_leaf = 0;
+
+  KeyGroup myGroup;
+  LeafNode* leaves[numLeaves];
+
+  EVP_PKEY *paramKey = NULL;
+  EVP_PKEY_CTX *paramControl = EVP_PKEY_CTX_new_id(EVP_PKEY_DH, NULL);
+  EVP_PKEY_paramgen_init(paramControl);
+  EVP_PKEY_CTX_set_dh_paramgen_prime_len(paramControl, 1024);
+  EVP_PKEY_paramgen(paramControl, &paramKey);
+
+  DHManager dhManager(paramKey);
+  dhManager.generateKey();
+  EVP_PKEY *fillerKey = dhManager.getKey();;
+
+  //do not implement network this way
+  //all DH key are the same; this is not secure
+  //just filling storage for testing
+  for(int i = 0; i < 6; i++)
+    leaves[i] = new LeafNode(i, fillerKey, NULL);
+
+  unsigned char key[32];
+  RAND_bytes(key, sizeof(key));
+  unsigned char newKey[32];
+  RAND_bytes(newKey, sizeof(newKey));
+  getSha256Digest(newKey);
+
+  cout << "-- starting KeyGroup" << endl;
+  myGroup.startTree(key, leaves[next_leaf], leaves[next_leaf + 1]);
+  next_leaf += 2;
+  cout << "   The group key is:  " << printDigest(myGroup.getGroupKey()) << endl;
+  cout << "   The leaf count is: " << myGroup.getLeafCount() << endl;
+  cout << "   Left Leaf ID is:   " << (myGroup.getRootNode())->getLeftChild()->getID() << endl;
+  cout << "   Right Leaf ID is:  " << (myGroup.getRootNode())->getRightChild()->getID() << endl;
+
+
+  cout << "-- adding Leaf: " << leaves[next_leaf]->getID() << endl;
+  bool is_right;
+  LeafNode* temp = (LeafNode*) myGroup.findReplyingNode(is_right);
+  if ( temp == NULL )
+     cout << "ERROR finding reply" << endl;
+  cout << "   replying node id:   " << temp->getID() << endl;
+  if ( myGroup.addLeafNode(leaves[next_leaf], temp, is_right) == 0)
+     cout << "ERROR adding" << endl;
+  cout << "   The group key is:  " << printDigest(myGroup.getGroupKey()) << endl;
+  cout << "   The middle key is: " << printDigest(temp->getParentNode()->getKey()) << endl;
+  cout << "   The leaf count is: " << myGroup.getLeafCount() << endl;
+  next_leaf++;
+
+  cout << "-- adding Leaf: " << leaves[next_leaf]->getID() << endl;
+  temp = (LeafNode*) myGroup.findReplyingNode(is_right);
+  if ( temp == NULL )
+     cout << "ERROR finding reply" << endl;
+  cout << "   replying node id:   " << temp->getID() << endl;
+  if ( myGroup.addLeafNode(leaves[next_leaf], temp, is_right) == 0)
+     cout << "ERROR adding" << endl;
+  cout << "   The group key is:   " << printDigest(myGroup.getGroupKey()) << endl;
+  cout << "   The middle key is: " << printDigest(temp->getParentNode()->getKey()) << endl;
+  cout << "   The leaf count is: " << myGroup.getLeafCount() << endl;
+  next_leaf++;
+
+
+  cout << "-- adding Leaf: " << leaves[next_leaf]->getID() << endl;
+  temp = (LeafNode*) myGroup.findReplyingNode(is_right);
+  if ( temp == NULL )
+     cout << "ERROR finding reply" << endl;
+  cout << "   replying node id:   " << temp->getID() << endl;
+  if ( myGroup.addLeafNode(leaves[next_leaf++], temp, is_right) == 0)
+     cout << "ERROR adding" << endl;
+  cout << "   The group key is:  " << printDigest(myGroup.getGroupKey()) << endl;
+  cout << "   The middle key is: " << printDigest(temp->getParentNode()->getKey()) << endl;
+  cout << "   The leaf count is: " << myGroup.getLeafCount() << endl;
+  next_leaf++;
+
+  cout << "-- checking bin and dec codes" << endl;
+  cout << "   root node bin:  " << (myGroup.getRootNode())->getBinCode() << endl;
+  cout << "   root node dec:  " << (myGroup.getRootNode())->getDecCode() << endl;
+  cout << "   left node bin:  " << (myGroup.getRootNode())->getLeftChild()->getBinCode() << endl;
+  cout << "   left node dec:  " << (myGroup.getRootNode())->getLeftChild()->getDecCode() << endl;
+  cout << "   right node bin: " << (myGroup.getRootNode())->getRightChild()->getBinCode() << endl;
+  cout << "   right node dec: " << (myGroup.getRootNode())->getRightChild()->getDecCode() << endl;
+
+  cout << endl << endl;
+
+  cout << "-- removing Leaf: 4" << endl;
+  if ( myGroup.removeLeafNode(4, newKey) == 0 )
+     cout << "ERROR remmoving 4" << endl;
+  cout << "   The group key is:  " << printDigest(myGroup.getGroupKey()) << endl;
+  cout << "   The leaf count is: " << myGroup.getLeafCount() << endl;
+
+
+
+
+}
+
+
+
+
+
+
+
+
+

@@ -29,6 +29,7 @@ public:
   TreeNode* getRightChild();
   string getDecCode();
   string getBinCode();
+  unsigned char* getKey();
 
   bool isLeaf();
 

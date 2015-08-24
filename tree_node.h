@@ -30,6 +30,7 @@ public:
   virtual int getID(){}
   virtual string getBinCode(){}
   virtual string getDecCode(){}
+  virtual unsigned char* getKey(){}
 
   virtual void setKey(unsigned char* new_key){}
   virtual void setBinCode(string new_bin){}

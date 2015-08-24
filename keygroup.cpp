@@ -55,6 +55,14 @@ unsigned char* KeyGroup::getGroupKey(){
   return groupKey;
 }
 
+MiddleNode* KeyGroup::getRootNode() {
+  return root_node;
+}
+
+int KeyGroup::getLeafCount() {
+  return leaf_count;
+}
+
 //copies data from new_root_node to root node
 //pre new_root_node is middle node with key and children
 //post root_node assigned data in new_root_node, bin_code and dec_ccode are "-"
@@ -74,8 +82,11 @@ int KeyGroup::setRootNode(MiddleNode* new_root_node) {
 
 void KeyGroup::startTree(unsigned char* new_key, LeafNode* left_leaf, LeafNode* right_leaf ) {
 
+  left_leaf->setParentNode(root_node);
+  right_leaf->setParentNode(root_node);
   root_node->setLeftChild((TreeNode*)left_leaf);
   root_node->setRightChild((TreeNode*)right_leaf);
+  
   leaf_count = 2;
 
   setGroupKey(new_key);
@@ -95,7 +106,7 @@ int KeyGroup::addLeafNode(LeafNode* new_leaf, LeafNode* reply_node, bool right_b
 
   if( !(new_leaf->isLeaf()) )
     return 0;
-  if( reply_node->isLeaf() )
+  if( !(reply_node->isLeaf()) )
     return 0;
 
   // generate new codes
@@ -138,7 +149,7 @@ int KeyGroup::removeLeafNode(int id, unsigned char* new_key) {
   TreeNode *sibling;
   bool leaving_is_right, parent_is_right;
 
-  leaving_node = (LeafNode*)findLeafNode(id);
+  leaving_node = findLeafNode(id);
 
   if( !(leaving_node->isLeaf()) )
     return 0;
@@ -204,7 +215,7 @@ TreeNode* KeyGroup::findReplyingNode(bool& right_branch) {
     } else if( !left_is_leaf && right_is_leaf ) {
        replying_node = tracking_node->getRightChild();
        right_branch = true;
-    } else if( !left_is_leaf && !right_is_leaf ){
+    } else if( !left_is_leaf && !right_is_leaf ) {
        search_queue.push(tracking_node->getLeftChild());
        search_queue.push(tracking_node->getRightChild());
     }
@@ -219,10 +230,10 @@ TreeNode* KeyGroup::findReplyingNode(bool& right_branch) {
 //locates leaf by id (BFS)
 //returns the pointer to leaf
 //  if NULL then not found
-TreeNode* KeyGroup::findLeafNode(int target_id) {
+LeafNode* KeyGroup::findLeafNode(int target_id) {
 
   TreeNode* tracking_node = NULL;
-  TreeNode* target_node = NULL;
+  LeafNode* target_node = NULL;
   queue <TreeNode*> search_queue;
   int left_id, right_id;
 
@@ -236,9 +247,9 @@ TreeNode* KeyGroup::findLeafNode(int target_id) {
     right_id = (tracking_node->getRightChild())->getID();
 
     if( left_id = target_id ) {
-       target_node = tracking_node->getLeftChild();
+       target_node = (LeafNode*)tracking_node->getLeftChild();
     } else if( right_id = target_id ) {
-       target_node = tracking_node->getRightChild();
+       target_node = (LeafNode*)tracking_node->getRightChild();
     } 
 
     if( left_id == -1 ) {
